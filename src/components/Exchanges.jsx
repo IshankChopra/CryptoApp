@@ -1,34 +1,93 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { server } from "../index";
-import { Container, HStack } from "@chakra-ui/react";
+import {
+  Container,
+  HStack,
+  VStack,
+  Image,
+  Heading,
+  Text,
+} from "@chakra-ui/react";
 import Loader from "./Loader";
+import ErrorComponent from "./ErrorComponent";
 
 const Exchanges = () => {
   const [exchanges, setExchanges] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    axios.get(`${server}/exchanges`).then((response) => {
-      console.log(response.data);
-      setExchanges(response.data);
-      setLoading(false);
-    });
+    const fetchExchanges = async () => {
+      try {
+        const { data } = await axios.get(`${server}/exchanges`);
+        setExchanges(data);
+        setLoading(false);
+      } catch (error) {
+        setError(true);
+        setLoading(false);
+      }
+    };
+    fetchExchanges();
   }, []);
+
+  if (error) return <ErrorComponent message={"Error while Loading"} />;
   return (
     <Container maxW={"container.xl"}>
       {loading ? (
         <Loader />
       ) : (
         <>
-          <HStack>
+          <HStack wrap={"wrap"}>
             {exchanges.map((i) => {
-              return <div>{i.name}</div>;
+              return (
+                <ExchangeCard
+                  id={i.id}
+                  name={i.name}
+                  img={i.image}
+                  url={i.url}
+                  rank={i.trust_score_rank}
+                />
+              );
             })}
           </HStack>
         </>
       )}
     </Container>
+  );
+};
+
+const ExchangeCard = ({ name, img, url, rank }) => {
+  return (
+    <a href={url} target={"blank"}>
+      <VStack
+        w={"52"}
+        shadow={"lg"}
+        p={"8"}
+        borderRadius={"lg"}
+        transition={"all 0.5s"}
+        m={"3"}
+        css={{
+          "&:hover": {
+            transform: "scale(1.1)",
+          },
+        }}
+      >
+        <Image
+          src={img}
+          w={"10"}
+          h={"10"}
+          objectFit={"contain"}
+          alt={"Exchange"}
+        ></Image>
+
+        <Heading size={"md"} noOfLines={1}>
+          {rank}
+        </Heading>
+
+        <Text noOfLines={1}>{name}</Text>
+      </VStack>
+    </a>
   );
 };
 
