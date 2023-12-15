@@ -9,6 +9,8 @@ import {
   Heading,
   Text,
   Button,
+  RadioGroup,
+  Radio,
 } from "@chakra-ui/react";
 import Loader from "./Loader";
 import ErrorComponent from "./ErrorComponent";
@@ -39,7 +41,7 @@ const Coins = () => {
         );
         setCoins(data);
         setLoading(false);
-        console.log(data);
+        //console.log(data);
       } catch (error) {
         setError(true);
         setLoading(false);
@@ -55,7 +57,17 @@ const Coins = () => {
         <Loader />
       ) : (
         <>
-          <HStack wrap={"wrap"}>
+          <RadioGroup value={currency} onChange={setCurrency} p={"8"}>
+            <HStack spacing={"4"}>
+              <Radio value={"inr"}>INR</Radio>
+
+              <Radio value={"usd"}> USD</Radio>
+
+              <Radio value={"euro"}> EURO</Radio>
+            </HStack>
+          </RadioGroup>
+
+          <HStack wrap={"wrap"} justifyContent={"space-evenly"}>
             {coins.map((i) => {
               return (
                 <CoinCard
