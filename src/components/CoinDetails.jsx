@@ -11,6 +11,8 @@ import {
   StatArrow,
   Text,
   VStack,
+  Badge,
+  Progress,
 } from "@chakra-ui/react";
 import React from "react";
 import Loader from "./Loader";
@@ -109,6 +111,19 @@ const CoinDetails = () => {
                   {coin.market_data.price_change_percentage_24h}%
                 </StatHelpText>
               </Stat>
+
+              <Badge
+                fontSize={"2xl"}
+                bgColor={"blackAlpha.800"}
+                color={"white"}
+              >
+                {`#${coin.market_cap_rank}`}
+              </Badge>
+
+              <CustomBar
+                high={`${currencysymbol}${coin.market_data.high_24h[currency]}`}
+                low={`${currencysymbol}${coin.market_data.low_24h[currency]}`}
+              />
             </VStack>
           </>
         )}
@@ -117,4 +132,14 @@ const CoinDetails = () => {
   );
 };
 
+const CustomBar = ({ high, low }) => (
+  <VStack w={"full"}>
+    <Progress value={50} colorScheme={"teal"} w={"full"} />
+    <HStack justifyContent={"space-between"} w={"full"}>
+      <Badge children={low} colorScheme={"red"} />
+      <Text fontSize={"sm"}>24H Range</Text>
+      <Badge children={high} colorScheme={"green"} />
+    </HStack>
+  </VStack>
+);
 export default CoinDetails;
