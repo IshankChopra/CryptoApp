@@ -8,9 +8,11 @@ import {
   Image,
   Heading,
   Text,
+  Button,
 } from "@chakra-ui/react";
 import Loader from "./Loader";
 import ErrorComponent from "./ErrorComponent";
+import CoinCard from "./CoinCard";
 
 const Coins = () => {
   const [coins, setCoins] = useState([]);
@@ -18,6 +20,16 @@ const Coins = () => {
   const [error, setError] = useState(false);
   const [pages, setPages] = useState(1);
   const [currency, setCurrency] = useState("inr");
+
+  const currencysymbol =
+    currency === "inr" ? "₹" : currency === "eur" ? "€" : "$";
+
+  const changePage = (page) => {
+    setPages(page);
+    setLoading(true);
+  };
+
+  const btns = new Array(132).fill(1);
 
   useEffect(() => {
     const fetchCoins = async () => {
@@ -46,53 +58,33 @@ const Coins = () => {
           <HStack wrap={"wrap"}>
             {coins.map((i) => {
               return (
-                <ExchangeCard
+                <CoinCard
                   id={i.id}
                   name={i.name}
+                  price={i.current_price}
                   img={i.image}
-                  url={i.url}
-                  rank={i.trust_score_rank}
+                  symbol={i.symbol}
+                  currencySymbol={currencysymbol}
                 />
               );
             })}
           </HStack>
+
+          <HStack w={"full"} overflow={"auto"} p={"8"}>
+            {btns.map((item, index) => (
+              <Button
+                key={index}
+                bgColor={"blackAlpha.900"}
+                color={"white"}
+                onClick={() => changePage(index + 1)}
+              >
+                {index + 1}
+              </Button>
+            ))}
+          </HStack>
         </>
       )}
     </Container>
-  );
-};
-
-const ExchangeCard = ({ name, img, url, rank }) => {
-  return (
-    <a href={url} target={"blank"}>
-      <VStack
-        w={"52"}
-        shadow={"lg"}
-        p={"8"}
-        borderRadius={"lg"}
-        transition={"all 0.5s"}
-        m={"3"}
-        css={{
-          "&:hover": {
-            transform: "scale(1.1)",
-          },
-        }}
-      >
-        <Image
-          src={img}
-          w={"10"}
-          h={"10"}
-          objectFit={"contain"}
-          alt={"Exchange"}
-        ></Image>
-
-        <Heading size={"md"} noOfLines={1}>
-          {rank}
-        </Heading>
-
-        <Text noOfLines={1}>{name}</Text>
-      </VStack>
-    </a>
   );
 };
 
