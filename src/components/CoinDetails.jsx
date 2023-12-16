@@ -23,12 +23,16 @@ import axios from "axios";
 import { server } from "..";
 import ErrorComponent from "./ErrorComponent";
 
+import Chart from "./Chart";
+
 const CoinDetails = () => {
   const [coin, setCoin] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const [currency, setCurrency] = useState("inr");
+  const [days, setDays] = useState("24h");
+  const [chartArray, setChartArray] = useState([]);
 
   const currencysymbol =
     currency === "inr" ? "₹" : currency === "eur" ? "€" : "$";
@@ -40,8 +44,13 @@ const CoinDetails = () => {
       const fetchCoin = async () => {
         try {
           const { data } = await axios.get(`${server}/coins/${params.id}`);
-          console.log(data);
+
+          const { data: chartData } = await axios.get(
+            `${server}/coins/${params.id}/market_chart?vs_currency=${currency}&days=${days}`
+          );
+
           setCoin(data);
+          setChartArray(chartData.prices);
           setLoading(false);
           //console.log(data);
         } catch (error) {
@@ -65,7 +74,7 @@ const CoinDetails = () => {
         ) : (
           <>
             <Box borderWidth={1} width={"full"}>
-              Ishank Chopra
+              <Chart arr={chartArray} currency={currencysymbol} days={days} />
             </Box>
 
             {/* Button */}
