@@ -1,7 +1,10 @@
-# Getting Started with Create React App
+# CryptoSphere
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+```bash
+npm install -g create-react-app
+```
 ## Available Scripts
 
 In the project directory, you can run:
